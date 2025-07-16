@@ -2,39 +2,41 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
-All colors MUST be HSL.
+/* Boiler AI Academic Planning Platform Design System
+   Minimalist grayscale palette with Inter typography
+   All colors MUST be HSL.
 */
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
+    /* Primary grayscale palette for minimalist design */
+    --background: 0 0% 96.1%;          /* #F5F5F5 - Subtle grey background */
+    --foreground: 0 0% 15%;            /* #262626 - Dark text for readability */
 
-    --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
+    --card: 0 0% 100%;                 /* #FFFFFF - Pure white cards */
+    --card-foreground: 0 0% 15%;       /* #262626 - Dark text on cards */
 
-    --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
+    --popover: 0 0% 100%;              /* #FFFFFF - White popovers */
+    --popover-foreground: 0 0% 15%;    /* #262626 - Dark text in popovers */
 
-    --primary: 222.2 47.4% 11.2%;
-    --primary-foreground: 210 40% 98%;
+    --primary: 0 0% 9%;                /* #171717 - Deep charcoal for primary actions */
+    --primary-foreground: 0 0% 98%;    /* #FAFAFA - Light text on primary */
 
-    --secondary: 210 40% 96.1%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
+    --secondary: 0 0% 96.1%;           /* #F5F5F5 - Subtle grey for secondary elements */
+    --secondary-foreground: 0 0% 15%;  /* #262626 - Dark text on secondary */
 
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
+    --muted: 0 0% 96.1%;               /* #F5F5F5 - Muted background areas */
+    --muted-foreground: 0 0% 45%;      /* #737373 - Muted text */
 
-    --accent: 210 40% 96.1%;
-    --accent-foreground: 222.2 47.4% 11.2%;
+    --accent: 0 0% 91%;                /* #E8E8E8 - Subtle accent color */
+    --accent-foreground: 0 0% 15%;     /* #262626 - Text on accent */
 
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
+    --destructive: 0 84.2% 60.2%;      /* Red for destructive actions */
+    --destructive-foreground: 0 0% 98%; /* Light text on destructive */
 
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 222.2 84% 4.9%;
+    --border: 0 0% 87.8%;              /* #E0E0E0 - Low-contrast borders */
+    --input: 0 0% 87.8%;               /* #E0E0E0 - Input borders */
+    --ring: 0 0% 15%;                  /* #262626 - Focus ring color */
 
     --radius: 0.5rem;
 
@@ -101,5 +103,36 @@ All colors MUST be HSL.
 
   body {
     @apply bg-background text-foreground;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    font-feature-settings: 'cv02', 'cv03', 'cv04', 'cv11';
+  }
+  
+  /* Refined micro-interactions */
+  .transition-refined {
+    transition: all 0.2s cubic-bezier(0.4, 0.0, 0.2, 1);
+  }
+  
+  /* Subtle hover states */
+  .hover-lift:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  }
+  
+  /* Custom scrollbar styling */
+  .custom-scrollbar::-webkit-scrollbar {
+    width: 6px;
+  }
+  
+  .custom-scrollbar::-webkit-scrollbar-track {
+    background: hsl(var(--muted));
+  }
+  
+  .custom-scrollbar::-webkit-scrollbar-thumb {
+    background: hsl(var(--border));
+    border-radius: 3px;
+  }
+  
+  .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+    background: hsl(var(--muted-foreground) / 0.3);
   }
 }
