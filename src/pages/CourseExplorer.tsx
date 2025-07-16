@@ -115,9 +115,9 @@ const allCourses = [
 
 export default function CourseExplorer() {
   const [searchTerm, setSearchTerm] = useState("");
-  const [selectedDepartment, setSelectedDepartment] = useState("");
-  const [selectedCredits, setSelectedCredits] = useState("");
-  const [selectedLevel, setSelectedLevel] = useState("");
+  const [selectedDepartment, setSelectedDepartment] = useState("all");
+  const [selectedCredits, setSelectedCredits] = useState("any");
+  const [selectedLevel, setSelectedLevel] = useState("all");
   const [filteredCourses, setFilteredCourses] = useState(allCourses);
 
   const departments = ["Computer Science", "Mathematics", "English", "Physics", "Chemistry"];
@@ -204,7 +204,7 @@ export default function CourseExplorer() {
                       <SelectValue placeholder="All departments" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="">All departments</SelectItem>
+                      <SelectItem value="all">All departments</SelectItem>
                       {departments.map((dept) => (
                         <SelectItem key={dept} value={dept}>{dept}</SelectItem>
                       ))}
@@ -222,7 +222,7 @@ export default function CourseExplorer() {
                       <SelectValue placeholder="Any credits" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="">Any credits</SelectItem>
+                      <SelectItem value="any">Any credits</SelectItem>
                       {creditOptions.map((credits) => (
                         <SelectItem key={credits} value={credits}>{credits}</SelectItem>
                       ))}
@@ -240,7 +240,7 @@ export default function CourseExplorer() {
                       <SelectValue placeholder="All levels" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="">All levels</SelectItem>
+                      <SelectItem value="all">All levels</SelectItem>
                       {levelOptions.map((level) => (
                         <SelectItem key={level} value={level}>{level}</SelectItem>
                       ))}
@@ -253,9 +253,9 @@ export default function CourseExplorer() {
                   className="w-full"
                   onClick={() => {
                     setSearchTerm("");
-                    setSelectedDepartment("");
-                    setSelectedCredits("");
-                    setSelectedLevel("");
+                    setSelectedDepartment("all");
+                    setSelectedCredits("any");
+                    setSelectedLevel("all");
                   }}
                 >
                   Clear Filters
