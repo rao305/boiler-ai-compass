@@ -15,21 +15,17 @@ export function TopNavigation() {
 
   return (
     <nav className="border-b border-border bg-card">
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div className="flex h-16 justify-between">
-          <div className="flex">
-            <div className="flex flex-shrink-0 items-center">
+      <div className="mx-auto max-w-7xl px-6">
+        <div className="flex h-14 items-center justify-between">
+          <div className="flex items-center space-x-8">
             <div className="flex items-center space-x-2">
-              <div className="h-8 w-8 rounded-lg bg-primary flex items-center justify-center">
-                <Bot className="h-5 w-5 text-primary-foreground" />
+              <div className="h-7 w-7 rounded-lg bg-primary flex items-center justify-center">
+                <Bot className="h-4 w-4 text-primary-foreground" />
               </div>
-              <div className="flex items-center space-x-1">
-                <span className="text-xl font-semibold text-primary">Boiler</span>
-                <span className="text-xl font-semibold text-foreground">AI</span>
-              </div>
+              <span className="text-lg font-medium text-primary">Boiler</span>
+              <span className="text-lg font-medium text-foreground">AI</span>
             </div>
-            </div>
-            <div className="hidden sm:ml-6 sm:flex sm:space-x-8">
+            <div className="hidden md:flex md:space-x-6">
               {navigationItems.map((item) => (
                 <NavLink
                   key={item.name}
@@ -37,10 +33,10 @@ export function TopNavigation() {
                   end={item.href === "/"}
                   className={({ isActive }) =>
                     cn(
-                      "inline-flex items-center space-x-2 px-1 pt-1 text-sm font-medium border-b-2 transition-refined",
+                      "flex items-center space-x-1.5 px-3 py-1.5 text-sm font-medium rounded-md transition-refined",
                       isActive
-                        ? "border-primary text-primary"
-                        : "border-transparent text-muted-foreground hover:border-border hover:text-foreground"
+                        ? "bg-primary/10 text-primary"
+                        : "text-muted-foreground hover:text-foreground hover:bg-muted/50"
                     )
                   }
                 >
@@ -50,14 +46,10 @@ export function TopNavigation() {
               ))}
             </div>
           </div>
-          <div className="hidden sm:ml-6 sm:flex sm:items-center">
-            <div className="flex items-center space-x-3">
-              <div className="text-sm text-muted-foreground">
-                Welcome back, <span className="font-medium text-foreground">Alex Johnson</span>
-              </div>
-              <div className="h-8 w-8 rounded-full bg-muted flex items-center justify-center">
-                <span className="text-sm font-medium text-foreground">AJ</span>
-              </div>
+          <div className="flex items-center space-x-3">
+            <span className="text-sm text-muted-foreground">Alex Johnson</span>
+            <div className="h-7 w-7 rounded-full bg-primary/20 flex items-center justify-center">
+              <span className="text-xs font-medium text-primary">AJ</span>
             </div>
           </div>
         </div>
