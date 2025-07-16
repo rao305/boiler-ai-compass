@@ -19,12 +19,15 @@ export function TopNavigation() {
         <div className="flex h-16 justify-between">
           <div className="flex">
             <div className="flex flex-shrink-0 items-center">
-              <div className="flex items-center space-x-2">
-                <div className="h-8 w-8 rounded-lg bg-primary flex items-center justify-center">
-                  <Bot className="h-5 w-5 text-primary-foreground" />
-                </div>
-                <span className="text-xl font-semibold text-foreground">Boiler AI</span>
+            <div className="flex items-center space-x-2">
+              <div className="h-8 w-8 rounded-lg bg-primary flex items-center justify-center">
+                <Bot className="h-5 w-5 text-primary-foreground" />
               </div>
+              <div className="flex items-center space-x-1">
+                <span className="text-xl font-semibold text-primary">Boiler</span>
+                <span className="text-xl font-semibold text-foreground">AI</span>
+              </div>
+            </div>
             </div>
             <div className="hidden sm:ml-6 sm:flex sm:space-x-8">
               {navigationItems.map((item) => (
