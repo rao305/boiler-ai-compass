@@ -1,8 +1,8 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Send, Bot, User, Plus, MoreHorizontal, Edit3, Trash2 } from "lucide-react";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import { Card } from "@/components/ui/card";
+import { Send, Bot, User, Lightbulb, BookOpen, Calendar, GraduationCap } from "lucide-react";
 
 interface Message {
   id: string;
@@ -11,230 +11,155 @@ interface Message {
   timestamp: Date;
 }
 
-interface Chat {
-  id: string;
-  title: string;
-  messages: Message[];
-  lastMessage: Date;
-}
+const examplePrompts = [
+  {
+    icon: BookOpen,
+    title: "Course Planning",
+    prompt: "What courses should I take next semester for my Computer Science degree?"
+  },
+  {
+    icon: GraduationCap,
+    title: "CODO Guidance",
+    prompt: "I want to change my major to Computer Science. What are the requirements?"
+  },
+  {
+    icon: Calendar,
+    title: "Prerequisites",
+    prompt: "What are the prerequisites for CS 251 Data Structures?"
+  },
+  {
+    icon: Lightbulb,
+    title: "Academic Planning",
+    prompt: "Help me plan my course schedule to graduate in 4 years"
+  }
+];
 
 export default function AIAssistant() {
-  const [chats, setChats] = useState<Chat[]>([
+  const [messages, setMessages] = useState<Message[]>([
     {
       id: "1",
-      title: "Welcome Chat",
-      messages: [
-        {
-          id: "1",
-          content: "Hello! I'm your Boiler AI assistant. I'm here to help you with course planning, degree requirements, and academic guidance. What would you like to know?",
-          sender: "ai",
-          timestamp: new Date()
-        }
-      ],
-      lastMessage: new Date(),
-    },
+      content: "Hello! I'm your Boiler AI assistant. I'm here to help you with course planning, degree requirements, and academic guidance. What would you like to know?",
+      sender: "ai",
+      timestamp: new Date()
+    }
   ]);
-  const [activeChat, setActiveChat] = useState<string>("1");
   const [inputMessage, setInputMessage] = useState("");
 
-  const currentChat = chats.find(chat => chat.id === activeChat);
-  const messages = currentChat?.messages || [];
-
-  const createNewChat = () => {
-    const newChat: Chat = {
-      id: Date.now().toString(),
-      title: "New Chat",
-      messages: [],
-      lastMessage: new Date(),
-    };
-    setChats(prev => [newChat, ...prev]);
-    setActiveChat(newChat.id);
-  };
-
-  const deleteChat = (chatId: string) => {
-    setChats(prev => prev.filter(chat => chat.id !== chatId));
-    if (activeChat === chatId && chats.length > 1) {
-      const remainingChats = chats.filter(chat => chat.id !== chatId);
-      setActiveChat(remainingChats[0]?.id || "");
-    }
-  };
-
-  const renameChat = (chatId: string, newTitle: string) => {
-    setChats(prev => prev.map(chat => 
-      chat.id === chatId ? { ...chat, title: newTitle } : chat
-    ));
-  };
-
   const handleSendMessage = () => {
-    if (!inputMessage.trim() || !currentChat) return;
+    if (!inputMessage.trim()) return;
 
-    const userMessage: Message = {
+    const newMessage: Message = {
       id: Date.now().toString(),
       content: inputMessage,
       sender: "user",
-      timestamp: new Date(),
+      timestamp: new Date()
     };
 
-    const updatedChat = {
-      ...currentChat,
-      messages: [...currentChat.messages, userMessage],
-      lastMessage: new Date(),
-      title: currentChat.messages.length === 0 ? inputMessage.slice(0, 30) + "..." : currentChat.title,
-    };
-
-    setChats(prev => prev.map(chat => 
-      chat.id === activeChat ? updatedChat : chat
-    ));
+    setMessages(prev => [...prev, newMessage]);
     setInputMessage("");
 
     // Simulate AI response
     setTimeout(() => {
-      const aiMessage: Message = {
+      const aiResponse: Message = {
         id: (Date.now() + 1).toString(),
         content: "I understand you're looking for academic guidance. Let me help you with that. Could you provide more details about your current major and academic year so I can give you more personalized recommendations?",
         sender: "ai",
-        timestamp: new Date(),
+        timestamp: new Date()
       };
-      
-      setChats(prev => prev.map(chat => 
-        chat.id === activeChat 
-          ? { ...chat, messages: [...chat.messages, aiMessage] }
-          : chat
-      ));
+      setMessages(prev => [...prev, aiResponse]);
     }, 1000);
+  };
+
+  const handlePromptClick = (prompt: string) => {
+    setInputMessage(prompt);
   };
 
   return (
     <div className="min-h-screen bg-background">
-      <div className="flex h-[calc(100vh-56px)]">
-        {/* Chat History Sidebar */}
-        <div className="w-64 border-r border-border bg-card">
-          <div className="p-3 border-b border-border">
-            <Button onClick={createNewChat} className="w-full justify-start" size="sm">
-              <Plus className="h-4 w-4 mr-2" />
-              New Chat
-            </Button>
-          </div>
-          <div className="overflow-y-auto h-full custom-scrollbar">
-            {chats.map((chat) => (
-              <div
-                key={chat.id}
-                className={`group flex items-center justify-between p-3 cursor-pointer border-b border-border/50 hover:bg-muted/50 transition-refined ${
-                  activeChat === chat.id ? "bg-primary/10 border-l-2 border-l-primary" : ""
-                }`}
-                onClick={() => setActiveChat(chat.id)}
-              >
-                <div className="flex-1 min-w-0">
-                  <h3 className="text-sm font-medium text-foreground truncate">
-                    {chat.title}
-                  </h3>
-                  <p className="text-xs text-muted-foreground">
-                    {chat.lastMessage.toLocaleDateString()}
-                  </p>
-                </div>
-                {chats.length > 1 && (
-                  <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        className="opacity-0 group-hover:opacity-100 h-6 w-6 p-0"
-                      >
-                        <MoreHorizontal className="h-3 w-3" />
-                      </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end">
-                      <DropdownMenuItem
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          const newTitle = prompt("Enter new title:", chat.title);
-                          if (newTitle) renameChat(chat.id, newTitle);
-                        }}
-                      >
-                        <Edit3 className="h-3 w-3 mr-2" />
-                        Rename
-                      </DropdownMenuItem>
-                      <DropdownMenuItem
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          deleteChat(chat.id);
-                        }}
-                        className="text-destructive"
-                      >
-                        <Trash2 className="h-3 w-3 mr-2" />
-                        Delete
-                      </DropdownMenuItem>
-                    </DropdownMenuContent>
-                  </DropdownMenu>
-                )}
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8">
+        <div className="grid grid-cols-1 lg:grid-cols-4 gap-8 h-[calc(100vh-8rem)]">
+          {/* Example Prompts Sidebar */}
+          <div className="lg:col-span-1">
+            <div className="sticky top-8">
+              <h2 className="text-lg font-semibold text-foreground mb-4">Quick Start</h2>
+              <div className="space-y-3">
+                {examplePrompts.map((example, index) => (
+                  <Card 
+                    key={index}
+                    className="p-4 cursor-pointer transition-refined hover-lift"
+                    onClick={() => handlePromptClick(example.prompt)}
+                  >
+                    <div className="flex items-start space-x-3">
+                      <div className="rounded-md bg-muted p-2">
+                        <example.icon className="h-4 w-4 text-muted-foreground" />
+                      </div>
+                      <div>
+                        <h3 className="text-sm font-medium text-foreground">{example.title}</h3>
+                        <p className="mt-1 text-xs text-muted-foreground">{example.prompt}</p>
+                      </div>
+                    </div>
+                  </Card>
+                ))}
               </div>
-            ))}
-          </div>
-        </div>
-
-        {/* Main Chat Area */}
-        <div className="flex-1 flex flex-col">
-          <div className="border-b border-border p-4 bg-card">
-            <div className="flex items-center space-x-2">
-              <Bot className="h-5 w-5 text-primary" />
-              <h1 className="text-lg font-medium text-foreground">Boiler AI Academic Assistant</h1>
             </div>
           </div>
 
-          {/* Messages Area */}
-          <div className="flex-1 overflow-y-auto p-6 space-y-4 custom-scrollbar">
-            {messages.length === 0 ? (
-              <div className="flex items-center justify-center h-full">
-                <div className="text-center max-w-md">
-                  <Bot className="h-16 w-16 text-primary mx-auto mb-4 opacity-50" />
-                  <h3 className="text-xl font-medium text-foreground mb-2">Welcome to Boiler AI</h3>
-                  <p className="text-muted-foreground">
-                    Start a conversation to get personalized academic guidance, course recommendations, 
-                    and help with your academic planning.
-                  </p>
+          {/* Main Chat Area */}
+          <div className="lg:col-span-3 flex flex-col">
+            <div className="flex-1 flex flex-col">
+              <div className="mb-6">
+                <h1 className="text-3xl font-bold text-foreground">AI Academic Assistant</h1>
+                <p className="mt-2 text-muted-foreground">
+                  Get personalized guidance for your academic journey at Purdue University
+                </p>
+              </div>
+
+              {/* Messages Container */}
+              <div className="flex-1 overflow-y-auto custom-scrollbar bg-card rounded-lg border border-border p-6 mb-4">
+                <div className="space-y-6">
+                  {messages.map((message) => (
+                    <div key={message.id} className="flex items-start space-x-3">
+                      <div className={`rounded-full p-2 ${
+                        message.sender === "ai" ? "bg-primary" : "bg-muted"
+                      }`}>
+                        {message.sender === "ai" ? (
+                          <Bot className={`h-4 w-4 ${
+                            message.sender === "ai" ? "text-primary-foreground" : "text-muted-foreground"
+                          }`} />
+                        ) : (
+                          <User className="h-4 w-4 text-muted-foreground" />
+                        )}
+                      </div>
+                      <div className="flex-1">
+                        <div className={`rounded-lg p-4 ${
+                          message.sender === "ai" 
+                            ? "bg-muted" 
+                            : "bg-primary text-primary-foreground"
+                        }`}>
+                          <p className="text-sm">{message.content}</p>
+                        </div>
+                        <p className="mt-1 text-xs text-muted-foreground">
+                          {message.timestamp.toLocaleTimeString()}
+                        </p>
+                      </div>
+                    </div>
+                  ))}
                 </div>
               </div>
-            ) : (
-              messages.map((message) => (
-                <div
-                  key={message.id}
-                  className={`flex ${message.sender === "user" ? "justify-end" : "justify-start"}`}
-                >
-                  <div
-                    className={`max-w-[70%] rounded-lg p-3 ${
-                      message.sender === "user"
-                        ? "bg-primary text-primary-foreground"
-                        : "bg-muted text-foreground"
-                    }`}
-                  >
-                    <div className="flex items-start space-x-2">
-                      {message.sender === "ai" && (
-                        <Bot className="h-4 w-4 mt-0.5 flex-shrink-0 text-primary" />
-                      )}
-                      {message.sender === "user" && (
-                        <User className="h-4 w-4 mt-0.5 flex-shrink-0" />
-                      )}
-                      <p className="text-sm leading-relaxed">{message.content}</p>
-                    </div>
-                  </div>
-                </div>
-              ))
-            )}
-          </div>
 
-          {/* Input Area */}
-          <div className="border-t border-border p-4 bg-card">
-            <div className="flex space-x-3 max-w-4xl mx-auto">
-              <Input
-                value={inputMessage}
-                onChange={(e) => setInputMessage(e.target.value)}
-                placeholder="Ask me anything about your academic journey..."
-                onKeyPress={(e) => e.key === "Enter" && handleSendMessage()}
-                className="flex-1"
-              />
-              <Button onClick={handleSendMessage} disabled={!inputMessage.trim()}>
-                <Send className="h-4 w-4" />
-              </Button>
+              {/* Input Area */}
+              <div className="flex space-x-2">
+                <Input
+                  placeholder="Ask about courses, requirements, planning..."
+                  value={inputMessage}
+                  onChange={(e) => setInputMessage(e.target.value)}
+                  onKeyPress={(e) => e.key === "Enter" && handleSendMessage()}
+                  className="flex-1"
+                />
+                <Button onClick={handleSendMessage} className="bg-primary hover:bg-primary/90">
+                  <Send className="h-4 w-4" />
+                </Button>
+              </div>
             </div>
           </div>
         </div>
