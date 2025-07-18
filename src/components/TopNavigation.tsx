@@ -4,8 +4,8 @@ import { cn } from "@/lib/utils";
 
 export function TopNavigation() {
   const navigationItems = [
-    { name: "AI Assistant", href: "/", icon: Bot },
-    { name: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
+    { name: "Dashboard", href: "/", icon: LayoutDashboard },
+    { name: "AI Assistant", href: "/ai-assistant", icon: Bot },
     { name: "Course Explorer", href: "/courses", icon: Search },
     { name: "Academic Planner", href: "/planner", icon: Calendar },
     { name: "Degree Audit", href: "/audit", icon: GraduationCap },

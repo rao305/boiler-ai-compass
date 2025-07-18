@@ -11,6 +11,7 @@ import AcademicPlanner from "./pages/AcademicPlanner";
 import DegreeAudit from "./pages/DegreeAudit";
 import TranscriptManagement from "./pages/TranscriptManagement";
 import Settings from "./pages/Settings";
+import Login from "./pages/Login";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -24,13 +25,14 @@ const App = () => (
         <div className="min-h-screen bg-background">
           <TopNavigation />
           <Routes>
-            <Route path="/" element={<AIAssistant />} />
-            <Route path="/dashboard" element={<Dashboard />} />
+            <Route path="/" element={<Dashboard />} />
+            <Route path="/ai-assistant" element={<AIAssistant />} />
             <Route path="/courses" element={<CourseExplorer />} />
             <Route path="/planner" element={<AcademicPlanner />} />
             <Route path="/audit" element={<DegreeAudit />} />
             <Route path="/transcript" element={<TranscriptManagement />} />
             <Route path="/settings" element={<Settings />} />
+            <Route path="/login" element={<Login />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </div>

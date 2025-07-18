@@ -1,8 +1,11 @@
 import { StatCard } from "@/components/StatCard";
 import { CourseCard } from "@/components/CourseCard";
+import { MiniAIAssistant } from "@/components/MiniAIAssistant";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { 
   BookOpen, 
   Calendar, 
@@ -10,8 +13,10 @@ import {
   TrendingUp, 
   Clock,
   FileText,
-  MessageCircle,
-  AlertCircle
+  AlertCircle,
+  Users,
+  Search,
+  BarChart3
 } from "lucide-react";
 
 const currentCourses = [
@@ -75,6 +80,9 @@ const degreeProgress = [
 ];
 
 export default function Dashboard() {
+  const [isAIExpanded, setIsAIExpanded] = useState(false);
+  const navigate = useNavigate();
+
   return (
     <div className="min-h-screen bg-background">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8">
@@ -116,12 +124,53 @@ export default function Dashboard() {
           />
         </div>
 
+        {/* Quick Actions */}
+        <div className="mb-8">
+          <h2 className="text-xl font-semibold text-foreground mb-4">Quick Actions</h2>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <Button 
+              variant="outline" 
+              className="h-16 flex-col space-y-2"
+              onClick={() => navigate("/courses")}
+            >
+              <Search className="h-5 w-5" />
+              <span className="text-sm">Explore Courses</span>
+            </Button>
+            <Button 
+              variant="outline" 
+              className="h-16 flex-col space-y-2"
+              onClick={() => navigate("/planner")}
+            >
+              <Calendar className="h-5 w-5" />
+              <span className="text-sm">Plan Semester</span>
+            </Button>
+            <Button 
+              variant="outline" 
+              className="h-16 flex-col space-y-2"
+              onClick={() => navigate("/audit")}
+            >
+              <BarChart3 className="h-5 w-5" />
+              <span className="text-sm">Degree Audit</span>
+            </Button>
+            <Button 
+              variant="outline" 
+              className="h-16 flex-col space-y-2"
+              onClick={() => navigate("/transcript")}
+            >
+              <FileText className="h-5 w-5" />
+              <span className="text-sm">Transcript</span>
+            </Button>
+          </div>
+        </div>
+
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Current Courses */}
           <div className="lg:col-span-2">
             <div className="flex items-center justify-between mb-6">
               <h2 className="text-xl font-semibold text-foreground">Current Courses</h2>
-              <Button variant="outline" size="sm">View All</Button>
+              <Button variant="outline" size="sm" onClick={() => navigate("/courses")}>
+                View All
+              </Button>
             </div>
             <div className="space-y-4">
               {currentCourses.map((course) => (
@@ -133,20 +182,10 @@ export default function Dashboard() {
           {/* Sidebar */}
           <div className="space-y-6">
             {/* AI Assistant Widget */}
-            <Card className="p-6">
-              <div className="flex items-center space-x-3 mb-4">
-                <div className="rounded-md bg-primary p-2">
-                  <MessageCircle className="h-4 w-4 text-primary-foreground" />
-                </div>
-                <h3 className="font-medium text-foreground">AI Assistant</h3>
-              </div>
-              <p className="text-sm text-muted-foreground mb-4">
-                Need help with course planning or have questions about requirements?
-              </p>
-              <Button className="w-full bg-primary hover:bg-primary/90">
-                Ask AI Assistant
-              </Button>
-            </Card>
+            <MiniAIAssistant 
+              isExpanded={isAIExpanded}
+              onToggleExpanded={() => setIsAIExpanded(!isAIExpanded)}
+            />
 
             {/* Upcoming Deadlines */}
             <Card className="p-6">
@@ -195,22 +234,25 @@ export default function Dashboard() {
               </div>
             </Card>
 
-            {/* Quick Actions */}
+            {/* Academic Insights */}
             <Card className="p-6">
-              <h3 className="font-medium text-foreground mb-4">Quick Actions</h3>
-              <div className="space-y-2">
-                <Button variant="outline" className="w-full justify-start">
-                  <FileText className="h-4 w-4 mr-2" />
-                  View Transcript
-                </Button>
-                <Button variant="outline" className="w-full justify-start">
-                  <Calendar className="h-4 w-4 mr-2" />
-                  Plan Next Semester
-                </Button>
-                <Button variant="outline" className="w-full justify-start">
-                  <BookOpen className="h-4 w-4 mr-2" />
-                  Explore Courses
-                </Button>
+              <h3 className="font-medium text-foreground mb-4 flex items-center space-x-2">
+                <Users className="h-4 w-4" />
+                <span>Academic Insights</span>
+              </h3>
+              <div className="space-y-3">
+                <div className="flex justify-between items-center">
+                  <span className="text-sm text-muted-foreground">Credits this semester</span>
+                  <span className="text-sm font-medium text-foreground">10</span>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span className="text-sm text-muted-foreground">Average difficulty</span>
+                  <span className="text-sm font-medium text-foreground">3.2/5</span>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span className="text-sm text-muted-foreground">Expected workload</span>
+                  <span className="text-sm font-medium text-foreground">25h/week</span>
+                </div>
               </div>
             </Card>
           </div>
