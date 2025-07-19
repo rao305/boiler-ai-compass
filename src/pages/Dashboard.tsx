@@ -164,46 +164,57 @@ export default function Dashboard() {
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {/* Current Courses */}
+          {/* AI Assistant - Left Side (Larger) */}
           <div className="lg:col-span-2">
-            <div className="flex items-center justify-between mb-6">
-              <h2 className="text-xl font-semibold text-foreground">Current Courses</h2>
-              <Button variant="outline" size="sm" onClick={() => navigate("/courses")}>
-                View All
-              </Button>
-            </div>
-            <div className="space-y-4">
-              {currentCourses.map((course) => (
-                <CourseCard key={course.id} course={course} />
-              ))}
-            </div>
-          </div>
-
-          {/* Sidebar */}
-          <div className="space-y-6">
-            {/* AI Assistant Widget */}
             <MiniAIAssistant 
               isExpanded={isAIExpanded}
               onToggleExpanded={() => setIsAIExpanded(!isAIExpanded)}
             />
+          </div>
+
+          {/* Right Sidebar */}
+          <div className="space-y-6">
+            {/* Current Courses - Compact Checklist */}
+            <Card className="p-4">
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="font-medium text-foreground flex items-center space-x-2">
+                  <BookOpen className="h-4 w-4" />
+                  <span>Current Courses</span>
+                </h3>
+                <Button variant="outline" size="sm" onClick={() => navigate("/courses")}>
+                  View All
+                </Button>
+              </div>
+              <div className="space-y-2">
+                {currentCourses.map((course) => (
+                  <div key={course.id} className="flex items-center justify-between p-2 rounded-md border border-border/50">
+                    <div>
+                      <p className="text-sm font-medium text-foreground">{course.code}</p>
+                      <p className="text-xs text-muted-foreground">{course.schedule}</p>
+                    </div>
+                    <span className="text-xs text-primary font-medium">{course.credits} cr</span>
+                  </div>
+                ))}
+              </div>
+            </Card>
 
             {/* Upcoming Deadlines */}
-            <Card className="p-6">
+            <Card className="p-4">
               <h3 className="font-medium text-foreground mb-4 flex items-center space-x-2">
                 <Clock className="h-4 w-4" />
                 <span>Upcoming Deadlines</span>
               </h3>
-              <div className="space-y-3">
+              <div className="space-y-2">
                 {upcomingDeadlines.map((deadline, index) => (
-                  <div key={index} className="flex items-center justify-between">
+                  <div key={index} className="flex items-center justify-between p-2 rounded-md border border-border/50">
                     <div>
                       <p className="text-sm font-medium text-foreground">{deadline.task}</p>
                       <p className="text-xs text-muted-foreground capitalize">{deadline.type}</p>
                     </div>
                     <div className="text-right">
-                      <p className="text-sm font-medium text-foreground">{deadline.due}</p>
+                      <p className="text-xs font-medium text-foreground">{deadline.due}</p>
                       {deadline.due === "Tomorrow" && (
-                        <AlertCircle className="h-4 w-4 text-yellow-500 ml-auto" />
+                        <AlertCircle className="h-3 w-3 text-yellow-500 ml-auto" />
                       )}
                     </div>
                   </div>
@@ -212,47 +223,25 @@ export default function Dashboard() {
             </Card>
 
             {/* Degree Progress */}
-            <Card className="p-6">
+            <Card className="p-4">
               <h3 className="font-medium text-foreground mb-4 flex items-center space-x-2">
                 <GraduationCap className="h-4 w-4" />
                 <span>Degree Progress</span>
               </h3>
-              <div className="space-y-4">
+              <div className="space-y-3">
                 {degreeProgress.map((category, index) => (
                   <div key={index}>
-                    <div className="flex justify-between items-center mb-2">
-                      <span className="text-sm font-medium text-foreground">
+                    <div className="flex justify-between items-center mb-1">
+                      <span className="text-xs font-medium text-foreground">
                         {category.category}
                       </span>
-                      <span className="text-sm text-muted-foreground">
+                      <span className="text-xs text-muted-foreground">
                         {category.completed}/{category.total}
                       </span>
                     </div>
-                    <Progress value={category.percentage} className="h-2" />
+                    <Progress value={category.percentage} className="h-1" />
                   </div>
                 ))}
-              </div>
-            </Card>
-
-            {/* Academic Insights */}
-            <Card className="p-6">
-              <h3 className="font-medium text-foreground mb-4 flex items-center space-x-2">
-                <Users className="h-4 w-4" />
-                <span>Academic Insights</span>
-              </h3>
-              <div className="space-y-3">
-                <div className="flex justify-between items-center">
-                  <span className="text-sm text-muted-foreground">Credits this semester</span>
-                  <span className="text-sm font-medium text-foreground">10</span>
-                </div>
-                <div className="flex justify-between items-center">
-                  <span className="text-sm text-muted-foreground">Average difficulty</span>
-                  <span className="text-sm font-medium text-foreground">3.2/5</span>
-                </div>
-                <div className="flex justify-between items-center">
-                  <span className="text-sm text-muted-foreground">Expected workload</span>
-                  <span className="text-sm font-medium text-foreground">25h/week</span>
-                </div>
               </div>
             </Card>
           </div>
