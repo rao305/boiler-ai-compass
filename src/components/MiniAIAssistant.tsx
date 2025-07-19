@@ -60,126 +60,149 @@ export function MiniAIAssistant({ isExpanded = false, onToggleExpanded }: MiniAI
   };
 
   if (!isExpanded) {
-    // Compact widget view
+    // Main widget view - using more space
     return (
-      <Card className="p-4 bg-card border-border">
-        <div className="flex items-center justify-between mb-3">
+      <Card className="p-6 bg-card border-border h-full">
+        <div className="flex items-center justify-between mb-4">
           <div className="flex items-center space-x-2">
-            <div className="rounded-md bg-primary p-1.5">
-              <Bot className="h-3 w-3 text-primary-foreground" />
+            <div className="rounded-md bg-primary p-2">
+              <Bot className="h-5 w-5 text-primary-foreground" />
             </div>
-            <h3 className="text-sm font-medium text-foreground">AI Assistant</h3>
+            <h3 className="text-lg font-semibold text-foreground">AI Academic Assistant</h3>
           </div>
           <Button
             variant="ghost"
             size="sm"
             onClick={onToggleExpanded}
-            className="h-6 w-6 p-0"
+            className="h-8 w-8 p-0"
           >
-            <Maximize2 className="h-3 w-3" />
+            <Maximize2 className="h-4 w-4" />
           </Button>
         </div>
         
-        <p className="text-xs text-muted-foreground mb-3">
-          Need help with course planning?
-        </p>
-        
-        <div className="space-y-2">
-          <Button 
-            onClick={onToggleExpanded}
-            variant="outline" 
-            size="sm" 
-            className="w-full text-xs h-7"
-          >
-            Quick Chat
-          </Button>
-          <Button 
-            onClick={handleGoToFullAI}
-            className="w-full text-xs h-7 bg-primary hover:bg-primary/90"
-          >
-            Open Full AI
-          </Button>
+        <div className="flex flex-col h-full space-y-4">
+          <div className="bg-muted/30 rounded-lg p-4 flex-1">
+            <p className="text-sm text-muted-foreground mb-4">
+              Need help with course planning, requirements, or academic guidance?
+            </p>
+            
+            <div className="space-y-3">
+              <div className="text-sm">
+                <p className="font-medium text-foreground mb-2">I can help you with:</p>
+                <ul className="text-muted-foreground space-y-1 text-sm">
+                  <li>• Plan your next semester</li>
+                  <li>• Check degree requirements</li>
+                  <li>• Find prerequisite courses</li>
+                  <li>• Academic study tips</li>
+                  <li>• Course recommendations</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+          
+          <div className="space-y-2">
+            <Button 
+              onClick={onToggleExpanded}
+              variant="default" 
+              className="w-full"
+            >
+              Start Quick Chat
+            </Button>
+            <Button 
+              onClick={handleGoToFullAI}
+              variant="outline"
+              className="w-full"
+            >
+              Open Full AI Assistant
+            </Button>
+          </div>
         </div>
       </Card>
     );
   }
 
-  // Expanded widget view
+  // Expanded overlay view
   return (
-    <Card className="p-4 bg-card border-border">
-      <div className="flex items-center justify-between mb-4">
-        <div className="flex items-center space-x-2">
-          <div className="rounded-md bg-primary p-1.5">
-            <Bot className="h-4 w-4 text-primary-foreground" />
+    <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+      <Card className="w-full max-w-4xl h-[80vh] flex flex-col bg-background">
+        <div className="flex items-center justify-between p-6 border-b">
+          <div className="flex items-center space-x-3">
+            <div className="rounded-md bg-primary p-2">
+              <Bot className="h-6 w-6 text-primary-foreground" />
+            </div>
+            <h3 className="text-xl font-semibold text-foreground">AI Academic Assistant</h3>
           </div>
-          <h3 className="text-sm font-medium text-foreground">AI Assistant</h3>
+          <div className="flex items-center space-x-2">
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={handleGoToFullAI}
+              className="flex items-center space-x-2"
+            >
+              <Maximize2 className="h-4 w-4" />
+              <span>Open Full AI</span>
+            </Button>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={onToggleExpanded}
+              className="h-8 w-8 p-0"
+            >
+              <X className="h-4 w-4" />
+            </Button>
+          </div>
         </div>
-        <div className="flex items-center space-x-1">
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={handleGoToFullAI}
-            className="h-6 w-6 p-0"
-            title="Open full AI assistant"
-          >
-            <Maximize2 className="h-3 w-3" />
-          </Button>
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={onToggleExpanded}
-            className="h-6 w-6 p-0"
-          >
-            <X className="h-3 w-3" />
-          </Button>
-        </div>
-      </div>
 
-      {/* Messages */}
-      <ScrollArea className="h-48 mb-3">
-        <div className="space-y-3">
-          {messages.map((message) => (
-            <div key={message.id} className="flex items-start space-x-2">
-              <div className={`rounded-full p-1 ${
-                message.sender === "ai" ? "bg-primary" : "bg-muted"
-              }`}>
-                {message.sender === "ai" ? (
-                  <Bot className="h-2.5 w-2.5 text-primary-foreground" />
-                ) : (
-                  <User className="h-2.5 w-2.5 text-muted-foreground" />
-                )}
-              </div>
-              <div className="flex-1">
-                <div className={`rounded-lg p-2 text-xs ${
-                  message.sender === "ai" 
-                    ? "bg-muted text-foreground" 
-                    : "bg-primary text-primary-foreground"
+        {/* Messages */}
+        <ScrollArea className="flex-1 p-6">
+          <div className="space-y-4">
+            {messages.map((message) => (
+              <div key={message.id} className="flex items-start space-x-3">
+                <div className={`rounded-full p-2 ${
+                  message.sender === "ai" ? "bg-primary" : "bg-muted"
                 }`}>
-                  {message.content}
+                  {message.sender === "ai" ? (
+                    <Bot className="h-4 w-4 text-primary-foreground" />
+                  ) : (
+                    <User className="h-4 w-4 text-muted-foreground" />
+                  )}
+                </div>
+                <div className="flex-1">
+                  <div className={`rounded-lg p-3 ${
+                    message.sender === "ai" 
+                      ? "bg-muted text-foreground" 
+                      : "bg-primary text-primary-foreground"
+                  }`}>
+                    <p className="text-sm">{message.content}</p>
+                    <p className="text-xs opacity-70 mt-1">
+                      {message.timestamp.toLocaleTimeString()}
+                    </p>
+                  </div>
                 </div>
               </div>
-            </div>
-          ))}
-        </div>
-      </ScrollArea>
+            ))}
+          </div>
+        </ScrollArea>
 
-      {/* Input */}
-      <div className="flex space-x-2">
-        <Input
-          placeholder="Ask a quick question..."
-          value={inputMessage}
-          onChange={(e) => setInputMessage(e.target.value)}
-          onKeyPress={(e) => e.key === "Enter" && handleSendMessage()}
-          className="flex-1 text-xs h-8"
-        />
-        <Button 
-          onClick={handleSendMessage} 
-          size="sm"
-          className="h-8 w-8 p-0 bg-primary hover:bg-primary/90"
-        >
-          <Send className="h-3 w-3" />
-        </Button>
-      </div>
-    </Card>
+        {/* Input */}
+        <div className="p-6 border-t">
+          <div className="flex space-x-3">
+            <Input
+              placeholder="Ask about courses, requirements, or planning..."
+              value={inputMessage}
+              onChange={(e) => setInputMessage(e.target.value)}
+              onKeyPress={(e) => e.key === "Enter" && handleSendMessage()}
+              className="flex-1"
+            />
+            <Button 
+              onClick={handleSendMessage} 
+              className="bg-primary hover:bg-primary/90"
+            >
+              <Send className="h-4 w-4" />
+            </Button>
+          </div>
+        </div>
+      </Card>
+    </div>
   );
 }
