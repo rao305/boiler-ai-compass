@@ -189,9 +189,48 @@ export default function CourseExplorer() {
                       placeholder="Course code or title..."
                       value={searchTerm}
                       onChange={(e) => setSearchTerm(e.target.value)}
-                      className="pl-10"
+                      className="pl-10 pr-20"
                     />
+                    <Button 
+                      size="sm" 
+                      className="absolute right-1 top-1/2 transform -translate-y-1/2 h-8"
+                      onClick={() => {
+                        // Filter courses based on search
+                        const filtered = allCourses.filter(course =>
+                          course.code.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                          course.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                          course.description.toLowerCase().includes(searchTerm.toLowerCase())
+                        );
+                        setFilteredCourses(filtered);
+                      }}
+                    >
+                      Search
+                    </Button>
                   </div>
+                  
+                  {/* Autocomplete suggestions */}
+                  {searchTerm && (
+                    <div className="mt-2 max-h-32 overflow-y-auto border border-border rounded-md bg-background">
+                      {allCourses
+                        .filter(course =>
+                          course.code.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                          course.title.toLowerCase().includes(searchTerm.toLowerCase())
+                        )
+                        .slice(0, 5)
+                        .map((course) => (
+                          <button
+                            key={course.id}
+                            className="w-full text-left px-3 py-2 hover:bg-accent text-sm border-b border-border last:border-b-0"
+                            onClick={() => {
+                              setSearchTerm(course.code);
+                              setFilteredCourses([course]);
+                            }}
+                          >
+                            <span className="font-medium">{course.code}</span> - {course.title}
+                          </button>
+                        ))}
+                    </div>
+                  )}
                 </div>
 
                 {/* Department Filter */}

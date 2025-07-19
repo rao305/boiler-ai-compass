@@ -1,3 +1,4 @@
+import { useState, useEffect } from "react";
 import { StatCard } from "@/components/StatCard";
 import { Card } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
@@ -15,6 +16,14 @@ import {
   Lightbulb,
   Calendar
 } from "lucide-react";
+
+interface PlannedCourse {
+  id: string;
+  code: string;
+  title: string;
+  credits: number;
+  semester: string;
+}
 
 const degreeRequirements = [
   {
@@ -131,12 +140,52 @@ const getStatusIcon = (status: string) => {
 };
 
 export default function DegreeAudit() {
-  const totalCompleted = degreeRequirements.reduce((sum, req) => sum + req.completed, 0);
-  const totalRequired = degreeRequirements.reduce((sum, req) => sum + req.total, 0);
+  const [plannedCourses, setPlannedCourses] = useState<{ [semesterId: string]: PlannedCourse[] }>({});
+  const [expectedGraduation, setExpectedGraduation] = useState("May 2026");
+
+  // Load planned courses from Academic Planner
+  useEffect(() => {
+    const savedPlan = localStorage.getItem('academicPlan');
+    if (savedPlan) {
+      const parsedPlan = JSON.parse(savedPlan);
+      setPlannedCourses(parsedPlan);
+      
+      // Calculate expected graduation based on planned courses
+      const semesters = Object.keys(parsedPlan).filter(key => parsedPlan[key].length > 0);
+      if (semesters.length > 0) {
+        const lastSemester = semesters.sort().pop();
+        const year = lastSemester?.includes('2027') ? '2027' : 
+                    lastSemester?.includes('2026') ? '2026' : '2025';
+        const season = lastSemester?.includes('spring') ? 'May' : 'December';
+        setExpectedGraduation(`${season} ${year}`);
+      }
+    }
+  }, []);
+
+  // Update degree requirements based on planned courses
+  const updateDegreeRequirements = () => {
+    const plannedCoursesList = Object.values(plannedCourses).flat();
+    
+    return degreeRequirements.map(requirement => ({
+      ...requirement,
+      courses: requirement.courses.map(course => {
+        const plannedCourse = plannedCoursesList.find(pc => pc.code === course.code);
+        if (plannedCourse) {
+          return { ...course, status: 'planned' };
+        }
+        return course;
+      })
+    }));
+  };
+
+  const updatedRequirements = updateDegreeRequirements();
+  const totalCompleted = updatedRequirements.reduce((sum, req) => sum + req.completed, 0);
+  const totalRequired = updatedRequirements.reduce((sum, req) => sum + req.total, 0);
   const overallProgress = Math.round((totalCompleted / totalRequired) * 100);
   
-  const totalCreditsCompleted = degreeRequirements.reduce((sum, req) => sum + req.creditHours.completed, 0);
-  const totalCreditsRequired = degreeRequirements.reduce((sum, req) => sum + req.creditHours.total, 0);
+  const totalCreditsCompleted = updatedRequirements.reduce((sum, req) => sum + req.creditHours.completed, 0);
+  const totalCreditsRequired = updatedRequirements.reduce((sum, req) => sum + req.creditHours.total, 0);
+  const plannedCredits = Object.values(plannedCourses).flat().reduce((sum, course) => sum + course.credits, 0);
 
   return (
     <div className="min-h-screen bg-background">
@@ -165,8 +214,8 @@ export default function DegreeAudit() {
           />
           <StatCard
             title="Expected Graduation"
-            value="May 2026"
-            subtitle="Spring semester"
+            value={expectedGraduation}
+            subtitle="Based on your plan"
             icon={Calendar}
           />
           <StatCard
@@ -181,7 +230,7 @@ export default function DegreeAudit() {
         <Card className="p-6 mb-8">
           <h2 className="text-xl font-semibold text-foreground mb-6">Degree Progress Overview</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
-            {degreeRequirements.map((requirement, index) => (
+            {updatedRequirements.map((requirement, index) => (
               <div key={index} className="text-center">
                 <div className="rounded-full bg-muted p-3 w-16 h-16 mx-auto mb-3 flex items-center justify-center">
                   <requirement.icon className="h-8 w-8 text-muted-foreground" />
@@ -203,7 +252,7 @@ export default function DegreeAudit() {
 
         {/* Detailed Requirements */}
         <div className="space-y-6">
-          {degreeRequirements.map((requirement, index) => (
+          {updatedRequirements.map((requirement, index) => (
             <Card key={index} className="p-6">
               <div className="flex items-center justify-between mb-6">
                 <div className="flex items-center space-x-3">
@@ -252,30 +301,71 @@ export default function DegreeAudit() {
         </div>
 
         {/* Action Items */}
+        {/* Academic Plan Summary */}
+        {Object.keys(plannedCourses).length > 0 && (
+          <Card className="p-6 mt-8">
+            <h2 className="text-xl font-semibold text-foreground mb-4">Your Academic Plan</h2>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+              <div className="text-center p-4 bg-primary/5 rounded-lg">
+                <p className="text-2xl font-bold text-primary">{plannedCredits}</p>
+                <p className="text-sm text-muted-foreground">Planned Credits</p>
+              </div>
+              <div className="text-center p-4 bg-green-50 rounded-lg">
+                <p className="text-2xl font-bold text-green-600">{Object.values(plannedCourses).flat().length}</p>
+                <p className="text-sm text-muted-foreground">Planned Courses</p>
+              </div>
+              <div className="text-center p-4 bg-blue-50 rounded-lg">
+                <p className="text-2xl font-bold text-blue-600">{expectedGraduation}</p>
+                <p className="text-sm text-muted-foreground">Expected Graduation</p>
+              </div>
+            </div>
+            <Button 
+              variant="outline" 
+              onClick={() => window.location.href = '/planner'}
+              className="w-full"
+            >
+              <Calendar className="h-4 w-4 mr-2" />
+              Update Academic Plan
+            </Button>
+          </Card>
+        )}
+
         <Card className="p-6 mt-8">
           <h2 className="text-xl font-semibold text-foreground mb-4">Recommended Actions</h2>
           <div className="space-y-3">
-            <div className="flex items-center space-x-3 p-3 bg-blue-50 border border-blue-200 rounded-lg">
-              <AlertCircle className="h-5 w-5 text-blue-600" />
-              <div>
-                <p className="font-medium text-blue-900">Complete STAT 350 next semester</p>
-                <p className="text-sm text-blue-700">Required for mathematics requirement completion</p>
+            {Object.keys(plannedCourses).length === 0 ? (
+              <div className="flex items-center space-x-3 p-3 bg-blue-50 border border-blue-200 rounded-lg">
+                <AlertCircle className="h-5 w-5 text-blue-600" />
+                <div>
+                  <p className="font-medium text-blue-900">Create your academic plan</p>
+                  <p className="text-sm text-blue-700">Use the Academic Planner to plan your courses and submit to degree audit</p>
+                </div>
               </div>
-            </div>
-            <div className="flex items-center space-x-3 p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
-              <Clock className="h-5 w-5 text-yellow-600" />
-              <div>
-                <p className="font-medium text-yellow-900">Plan technical electives</p>
-                <p className="text-sm text-yellow-700">Choose 4 more technical electives for degree completion</p>
-              </div>
-            </div>
-            <div className="flex items-center space-x-3 p-3 bg-green-50 border border-green-200 rounded-lg">
-              <CheckCircle className="h-5 w-5 text-green-600" />
-              <div>
-                <p className="font-medium text-green-900">On track for May 2026 graduation</p>
-                <p className="text-sm text-green-700">Current progress supports expected graduation timeline</p>
-              </div>
-            </div>
+            ) : (
+              <>
+                <div className="flex items-center space-x-3 p-3 bg-blue-50 border border-blue-200 rounded-lg">
+                  <AlertCircle className="h-5 w-5 text-blue-600" />
+                  <div>
+                    <p className="font-medium text-blue-900">Complete STAT 350 next semester</p>
+                    <p className="text-sm text-blue-700">Required for mathematics requirement completion</p>
+                  </div>
+                </div>
+                <div className="flex items-center space-x-3 p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
+                  <Clock className="h-5 w-5 text-yellow-600" />
+                  <div>
+                    <p className="font-medium text-yellow-900">Plan technical electives</p>
+                    <p className="text-sm text-yellow-700">Choose 4 more technical electives for degree completion</p>
+                  </div>
+                </div>
+                <div className="flex items-center space-x-3 p-3 bg-green-50 border border-green-200 rounded-lg">
+                  <CheckCircle className="h-5 w-5 text-green-600" />
+                  <div>
+                    <p className="font-medium text-green-900">On track for {expectedGraduation} graduation</p>
+                    <p className="text-sm text-green-700">Current plan supports expected graduation timeline</p>
+                  </div>
+                </div>
+              </>
+            )}
           </div>
         </Card>
       </div>

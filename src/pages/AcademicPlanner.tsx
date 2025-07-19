@@ -123,9 +123,42 @@ export default function AcademicPlanner() {
                     placeholder="Search courses..."
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
-                    className="pl-10"
+                    className="pl-10 pr-20"
                   />
+                  <Button 
+                    size="sm" 
+                    className="absolute right-1 top-1/2 transform -translate-y-1/2 h-8"
+                    onClick={() => {
+                      // Search functionality handled by filteredCourses
+                      console.log("Searching for:", searchTerm);
+                    }}
+                  >
+                    Search
+                  </Button>
                 </div>
+                
+                {/* Autocomplete suggestions */}
+                {searchTerm && (
+                  <div className="mt-2 max-h-32 overflow-y-auto border border-border rounded-md bg-background">
+                    {availableCourses
+                      .filter(course =>
+                        course.code.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                        course.title.toLowerCase().includes(searchTerm.toLowerCase())
+                      )
+                      .slice(0, 5)
+                      .map((course) => (
+                        <button
+                          key={course.id}
+                          className="w-full text-left px-3 py-2 hover:bg-accent text-sm border-b border-border last:border-b-0"
+                          onClick={() => {
+                            setSearchTerm(course.code);
+                          }}
+                        >
+                          <span className="font-medium">{course.code}</span> - {course.title}
+                        </button>
+                      ))}
+                  </div>
+                )}
               </div>
 
               {/* Course List */}
@@ -172,6 +205,19 @@ export default function AcademicPlanner() {
                 <Button className="w-full bg-primary hover:bg-primary/90">
                   <Save className="h-4 w-4 mr-2" />
                   Save Plan
+                </Button>
+                <Button 
+                  variant="outline" 
+                  className="w-full"
+                  onClick={() => {
+                    // Save plan to local storage for degree audit
+                    localStorage.setItem('academicPlan', JSON.stringify(plannedCourses));
+                    // Navigate to degree audit
+                    window.location.href = '/audit';
+                  }}
+                >
+                  <Download className="h-4 w-4 mr-2" />
+                  Submit to Degree Audit
                 </Button>
                 <Button variant="outline" className="w-full">
                   <Download className="h-4 w-4 mr-2" />
